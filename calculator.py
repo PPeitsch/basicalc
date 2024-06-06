@@ -1,5 +1,9 @@
 import math
 
+UNIDADES_DENSIDAD = {1: "g/cm^3", 2: "kg/m^3"}
+UNIDADES_MASA = {1: "mg", 2: "g", 3: "kg"}
+UNIDADES_LONGITUD = {1: "mm", 2: "cm", 3: "m"}
+
 
 def convertir_a_metros(valor, unidad):
     """
@@ -76,36 +80,56 @@ def convertir_desde_metros(valor, unidad):
     return conversiones.get(unidad, valor)
 
 
+def calcular_altura(diametro, masa, densidad, unidad_longitud):
+    diametro_metros = convertir_a_metros(diametro, unidad_longitud)
+    altura_metros = (4 * masa) / (math.pi * (diametro_metros ** 2) * densidad)
+    return convertir_desde_metros(altura_metros, unidad_longitud)
+
+
+def calcular_diametro(altura, masa, densidad, unidad_longitud):
+    altura_metros = convertir_a_metros(altura, unidad_longitud)
+    diametro_metros = math.sqrt((4 * masa) / (math.pi * altura_metros * densidad))
+    return convertir_desde_metros(diametro_metros, unidad_longitud)
+
+
+def solicitar_datos():
+    while True:
+        try:
+            print("Seleccione la unidad de densidad:")
+            for key, value in UNIDADES_DENSIDAD.items():
+                print(f"{key}: {value}")
+            unidad_densidad = int(input("Ingrese el número correspondiente a la unidad de densidad: ").strip())
+            if unidad_densidad not in UNIDADES_DENSIDAD:
+                raise ValueError("Unidad de densidad no válida.")
+
+            print("Seleccione la unidad de masa:")
+            for key, value in UNIDADES_MASA.items():
+                print(f"{key}: {value}")
+            unidad_masa = int(input("Ingrese el número correspondiente a la unidad de masa: ").strip())
+            if unidad_masa not in UNIDADES_MASA:
+                raise ValueError("Unidad de masa no válida.")
+
+            print("Seleccione la unidad de longitud (diámetro y altura):")
+            for key, value in UNIDADES_LONGITUD.items():
+                print(f"{key}: {value}")
+            unidad_longitud = int(input("Ingrese el número correspondiente a la unidad de longitud: ").strip())
+            if unidad_longitud not in UNIDADES_LONGITUD:
+                raise ValueError("Unidad de longitud no válida.")
+
+            densidad = float(input(f"Ingrese la densidad del cilindro ({UNIDADES_DENSIDAD[unidad_densidad]}): "))
+            masa = float(input(f"Ingrese la masa del cilindro ({UNIDADES_MASA[unidad_masa]}): "))
+
+            return densidad, masa, unidad_densidad, unidad_masa, unidad_longitud
+        except ValueError as e:
+            print(f"Error: {e}. Por favor intente de nuevo.")
+
+
 def calcular_cilindro():
     """
     Calcula la altura o el diámetro de un cilindro basado en su densidad, masa, y
     uno de los dos parámetros (diámetro o altura).
-
-    La densidad y la masa son datos que siempre se deben ingresar.
     """
-
-    # Selección de unidades
-    print("Seleccione la unidad de densidad:")
-    print("1: g/cm^3")
-    print("2: kg/m^3")
-    unidad_densidad = int(input("Ingrese el número correspondiente a la unidad de densidad: ").strip())
-
-    print("Seleccione la unidad de masa:")
-    print("1: mg")
-    print("2: g")
-    print("3: kg")
-    unidad_masa = int(input("Ingrese el número correspondiente a la unidad de masa: ").strip())
-
-    print("Seleccione la unidad de longitud (diámetro y altura):")
-    print("1: mm")
-    print("2: cm")
-    print("3: m")
-    unidad_longitud = int(input("Ingrese el número correspondiente a la unidad de longitud: ").strip())
-
-    # Solicitar datos
-    densidad = float(input(f"Ingrese la densidad del cilindro ({'g/cm^3' if unidad_densidad == 1 else 'kg/m^3'}): "))
-    masa = float(
-        input(f"Ingrese la masa del cilindro ({'mg' if unidad_masa == 1 else 'g' if unidad_masa == 2 else 'kg'}): "))
+    densidad, masa, unidad_densidad, unidad_masa, unidad_longitud = solicitar_datos()
 
     # Convertir unidades a SI
     densidad = convertir_densidad(densidad, unidad_densidad)
@@ -114,23 +138,19 @@ def calcular_cilindro():
     parametro = input("¿Qué desea calcular, altura (h) o diámetro (d)? Ingrese 'h' o 'd': ").lower()
 
     if parametro == 'h':
-        diametro = float(input(
-            f"Ingrese el diámetro del cilindro ({'mm' if unidad_longitud == 1 else 'cm' if unidad_longitud == 2 else 'm'}): "))
-        diametro_metros = convertir_a_metros(diametro, unidad_longitud)
-        altura_metros = (4 * masa) / (math.pi * (diametro_metros ** 2) * densidad)
-        altura = convertir_desde_metros(altura_metros, unidad_longitud)
-        print(
-            f"La altura del cilindro es: {altura:.2f} {'mm' if unidad_longitud == 1 else 'cm' if unidad_longitud == 2 else 'm'}")
-
+        try:
+            diametro = float(input(f"Ingrese el diámetro del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+            altura = calcular_altura(diametro, masa, densidad, unidad_longitud)
+            print(f"La altura del cilindro es: {altura:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+        except ValueError:
+            print("Entrada de diámetro no válida.")
     elif parametro == 'd':
-        altura = float(input(
-            f"Ingrese la altura del cilindro ({'mm' if unidad_longitud == 1 else 'cm' if unidad_longitud == 2 else 'm'}): "))
-        altura_metros = convertir_a_metros(altura, unidad_longitud)
-        diametro_metros = math.sqrt((4 * masa) / (math.pi * altura_metros * densidad))
-        diametro = convertir_desde_metros(diametro_metros, unidad_longitud)
-        print(
-            f"El diámetro del cilindro es: {diametro:.2f} {'mm' if unidad_longitud == 1 else 'cm' if unidad_longitud == 2 else 'm'}")
-
+        try:
+            altura = float(input(f"Ingrese la altura del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+            diametro = calcular_diametro(altura, masa, densidad, unidad_longitud)
+            print(f"El diámetro del cilindro es: {diametro:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+        except ValueError:
+            print("Entrada de altura no válida.")
     else:
         print("Parámetro no válido. Por favor ingrese 'h' para altura o 'd' para diámetro.")
 
