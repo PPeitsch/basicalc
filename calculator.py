@@ -1,202 +1,125 @@
 import math
+from typing import Dict, Tuple
 
-UNIDADES_DENSIDAD = {1: "g/cm^3", 2: "kg/m^3"}
-UNIDADES_MASA = {1: "mg", 2: "g", 3: "kg"}
-UNIDADES_LONGITUD = {1: "mm", 2: "cm", 3: "m"}
+UNIDADES_DENSIDAD: Dict[int, str] = {1: "g/cm^3", 2: "kg/m^3"}
+UNIDADES_MASA: Dict[int, str] = {1: "mg", 2: "g", 3: "kg"}
+UNIDADES_LONGITUD: Dict[int, str] = {1: "mm", 2: "cm", 3: "m"}
 
 
-def convertir_a_metros(valor, unidad):
+def convertir_unidad(valor: float, unidad: int, conversion_factor: Dict[int, float]) -> float:
     """
-    Convierte un valor a metros basado en la unidad dada.
+    Convierte un valor a la unidad base según el factor de conversión proporcionado.
 
     Args:
         valor (float): El valor a convertir.
-        unidad (int): El código de la unidad (1: mm, 2: cm, 3: m).
+        unidad (int): El código de la unidad.
+        conversion_factor (Dict[int, float]): Diccionario con los factores de conversión.
 
     Returns:
-        float: El valor convertido a metros.
+        float: El valor convertido.
     """
-    conversiones = {
-        1: valor / 1000,  # mm a m
-        2: valor / 100,  # cm a m
-        3: valor  # m
-    }
-    return conversiones.get(unidad, valor)
+    return valor * conversion_factor.get(unidad, 1)
 
 
-def convertir_a_kilogramos(valor, unidad):
+def convertir_a_metros(valor: float, unidad: int) -> float:
+    return convertir_unidad(valor, unidad, {1: 0.001, 2: 0.01, 3: 1})
+
+
+def convertir_a_kilogramos(valor: float, unidad: int) -> float:
+    return convertir_unidad(valor, unidad, {1: 1e-6, 2: 0.001, 3: 1})
+
+
+def convertir_densidad(densidad: float, unidad: int) -> float:
+    return convertir_unidad(densidad, unidad, {1: 1000, 2: 1})
+
+
+def convertir_desde_metros(valor: float, unidad: int) -> float:
+    return convertir_unidad(valor, unidad, {1: 1000, 2: 100, 3: 1})
+
+
+def calcular_dimension_cilindro(valor: float, masa: float, densidad: float, calcular_altura: bool) -> float:
     """
-    Convierte un valor a kilogramos basado en la unidad dada.
+    Calcula la altura o el diámetro de un cilindro.
 
     Args:
-        valor (float): El valor a convertir.
-        unidad (int): El código de la unidad (1: mg, 2: g, 3: kg).
+        valor (float): Diámetro (si calcular_altura es True) o altura (si es False).
+        masa (float): La masa del cilindro en kg.
+        densidad (float): La densidad del cilindro en kg/m^3.
+        calcular_altura (bool): True para calcular altura, False para calcular diámetro.
 
     Returns:
-        float: El valor convertido a kilogramos.
+        float: La altura o el diámetro del cilindro en metros.
     """
-    conversiones = {
-        1: valor / 1_000_000,  # mg a kg
-        2: valor / 1000,  # g a kg
-        3: valor  # kg
-    }
-    return conversiones.get(unidad, valor)
+    if calcular_altura:
+        return (4 * masa) / (math.pi * (valor ** 2) * densidad)
+    else:
+        return math.sqrt((4 * masa) / (math.pi * valor * densidad))
 
 
-def convertir_densidad(densidad, unidad):
+def calcular_dimension_cono(valor: float, masa: float, densidad: float, calcular_altura: bool) -> float:
     """
-    Convierte la densidad a kg/m^3 basado en la unidad dada.
+    Calcula la altura o el radio de un cono.
 
     Args:
-        densidad (float): La densidad a convertir.
-        unidad (int): El código de la unidad (1: g/cm^3, 2: kg/m^3).
+        valor (float): Radio (si calcular_altura es True) o altura (si es False).
+        masa (float): La masa del cono en kg.
+        densidad (float): La densidad del cono en kg/m^3.
+        calcular_altura (bool): True para calcular altura, False para calcular radio.
 
     Returns:
-        float: La densidad convertida a kg/m^3.
+        float: La altura o el radio del cono en metros.
     """
-    conversiones = {
-        1: densidad * 1000,  # g/cm^3 a kg/m^3
-        2: densidad  # kg/m^3
-    }
-    return conversiones.get(unidad, densidad)
+    if calcular_altura:
+        return (3 * masa) / (math.pi * (valor ** 2) * densidad)
+    else:
+        return math.sqrt((3 * masa) / (math.pi * valor * densidad))
 
 
-def convertir_desde_metros(valor, unidad):
+def solicitar_entrada(prompt: str, opciones: Dict[int, str]) -> int:
     """
-    Convierte un valor desde metros a la unidad especificada.
+    Solicita al usuario que elija una opción de un diccionario.
 
     Args:
-        valor (float): El valor en metros.
-        unidad (int): El código de la unidad a convertir (1: mm, 2: cm, 3: m).
+        prompt (str): El mensaje para mostrar al usuario.
+        opciones (Dict[int, str]): Un diccionario con las opciones disponibles.
 
     Returns:
-        float: El valor convertido a la unidad especificada.
+        int: El número de la opción seleccionada.
     """
-    conversiones = {
-        1: valor * 1000,  # m a mm
-        2: valor * 100,  # m a cm
-        3: valor  # m
-    }
-    return conversiones.get(unidad, valor)
+    while True:
+        print(prompt)
+        for key, value in opciones.items():
+            print(f"{key}: {value}")
+        try:
+            seleccion = int(input("Ingrese el número correspondiente: ").strip())
+            if seleccion in opciones:
+                return seleccion
+            raise ValueError
+        except ValueError:
+            print("Entrada no válida. Por favor, intente de nuevo.")
 
 
-def calcular_altura_cilindro(diametro, masa, densidad, unidad_longitud):
-    """
-    Calcula la altura de un cilindro en función del diámetro, masa y densidad.
-
-    Args:
-        diametro (float): El diámetro del cilindro.
-        masa (float): La masa del cilindro.
-        densidad (float): La densidad del cilindro.
-        unidad_longitud (int): El código de la unidad de longitud (1: mm, 2: cm, 3: m).
-
-    Returns:
-        float: La altura del cilindro en la unidad especificada.
-    """
-    diametro_metros = convertir_a_metros(diametro, unidad_longitud)
-    altura_metros = (4 * masa) / (math.pi * (diametro_metros ** 2) * densidad)
-    return convertir_desde_metros(altura_metros, unidad_longitud)
-
-
-def calcular_diametro_cilindro(altura, masa, densidad, unidad_longitud):
-    """
-    Calcula el diámetro de un cilindro en función de la altura, masa y densidad.
-
-    Args:
-        altura (float): La altura del cilindro.
-        masa (float): La masa del cilindro.
-        densidad (float): La densidad del cilindro.
-        unidad_longitud (int): El código de la unidad de longitud (1: mm, 2: cm, 3: m).
-
-    Returns:
-        float: El diámetro del cilindro en la unidad especificada.
-    """
-    altura_metros = convertir_a_metros(altura, unidad_longitud)
-    diametro_metros = math.sqrt((4 * masa) / (math.pi * altura_metros * densidad))
-    return convertir_desde_metros(diametro_metros, unidad_longitud)
-
-
-def calcular_altura_cono(radio, masa, densidad, unidad_longitud):
-    """
-    Calcula la altura de un cono en función del radio, masa y densidad.
-
-    Args:
-        radio (float): El radio de la base del cono.
-        masa (float): La masa del cono.
-        densidad (float): La densidad del cono.
-        unidad_longitud (int): El código de la unidad de longitud (1: mm, 2: cm, 3: m).
-
-    Returns:
-        float: La altura del cono en la unidad especificada.
-    """
-    radio_metros = convertir_a_metros(radio, unidad_longitud)
-    altura_metros = (3 * masa) / (math.pi * (radio_metros ** 2) * densidad)
-    return convertir_desde_metros(altura_metros, unidad_longitud)
-
-
-def calcular_radio_cono(altura, masa, densidad, unidad_longitud):
-    """
-    Calcula el radio de la base de un cono en función de la altura, masa y densidad.
-
-    Args:
-        altura (float): La altura del cono.
-        masa (float): La masa del cono.
-        densidad (float): La densidad del cono.
-        unidad_longitud (int): El código de la unidad de longitud (1: mm, 2: cm, 3: m).
-
-    Returns:
-        float: El radio del cono en la unidad especificada.
-    """
-    altura_metros = convertir_a_metros(altura, unidad_longitud)
-    radio_metros = math.sqrt((3 * masa) / (math.pi * altura_metros * densidad))
-    return convertir_desde_metros(radio_metros, unidad_longitud)
-
-
-def solicitar_datos():
+def solicitar_datos() -> Tuple[float, float, int, int, int]:
     """
     Solicita al usuario la entrada de los datos necesarios para el cálculo.
 
     Returns:
-        tuple: Una tupla que contiene la densidad, masa, unidad de densidad,
-               unidad de masa y unidad de longitud.
+        Tuple[float, float, int, int, int]: densidad, masa, unidad_densidad, unidad_masa, unidad_longitud
     """
-    while True:
-        try:
-            print("Seleccione la unidad de densidad:")
-            for key, value in UNIDADES_DENSIDAD.items():
-                print(f"{key}: {value}")
-            unidad_densidad = int(input("Ingrese el número correspondiente a la unidad de densidad: ").strip())
-            if unidad_densidad not in UNIDADES_DENSIDAD:
-                raise ValueError("Unidad de densidad no válida.")
+    unidad_densidad = solicitar_entrada("Seleccione la unidad de densidad:", UNIDADES_DENSIDAD)
+    unidad_masa = solicitar_entrada("Seleccione la unidad de masa:", UNIDADES_MASA)
+    unidad_longitud = solicitar_entrada("Seleccione la unidad de longitud (diámetro/altura/radio):", UNIDADES_LONGITUD)
 
-            print("Seleccione la unidad de masa:")
-            for key, value in UNIDADES_MASA.items():
-                print(f"{key}: {value}")
-            unidad_masa = int(input("Ingrese el número correspondiente a la unidad de masa: ").strip())
-            if unidad_masa not in UNIDADES_MASA:
-                raise ValueError("Unidad de masa no válida.")
+    densidad = float(input(f"Ingrese la densidad ({UNIDADES_DENSIDAD[unidad_densidad]}): "))
+    masa = float(input(f"Ingrese la masa ({UNIDADES_MASA[unidad_masa]}): "))
 
-            print("Seleccione la unidad de longitud (diámetro/altura/radio):")
-            for key, value in UNIDADES_LONGITUD.items():
-                print(f"{key}: {value}")
-            unidad_longitud = int(input("Ingrese el número correspondiente a la unidad de longitud: ").strip())
-            if unidad_longitud not in UNIDADES_LONGITUD:
-                raise ValueError("Unidad de longitud no válida.")
-
-            densidad = float(input(f"Ingrese la densidad ({UNIDADES_DENSIDAD[unidad_densidad]}): "))
-            masa = float(input(f"Ingrese la masa ({UNIDADES_MASA[unidad_masa]}): "))
-
-            return densidad, masa, unidad_densidad, unidad_masa, unidad_longitud
-        except ValueError as e:
-            print(f"Error: {e}. Por favor intente de nuevo.")
+    return densidad, masa, unidad_densidad, unidad_masa, unidad_longitud
 
 
 def calcular_figura_geometrica():
     """
     Calcula las dimensiones de una figura geométrica (cilindro o cono) en función de
     su densidad, masa y uno de los parámetros (altura/diámetro/radio).
-
-    Solicita al usuario los datos necesarios y realiza los cálculos según la figura seleccionada.
     """
     densidad, masa, unidad_densidad, unidad_masa, unidad_longitud = solicitar_datos()
 
@@ -205,45 +128,64 @@ def calcular_figura_geometrica():
 
     figura = input("¿Qué figura desea calcular, cilindro (c) o cono (co)? Ingrese 'c' o 'co': ").lower()
     if figura == 'c':
-        parametro = input("¿Qué desea calcular, altura (h) o diámetro (d)? Ingrese 'h' o 'd': ").lower()
-        if parametro == 'h':
-            try:
-                diametro = float(input(f"Ingrese el diámetro del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
-                altura = calcular_altura_cilindro(diametro, masa, densidad, unidad_longitud)
-                print(f"La altura del cilindro es: {altura:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
-            except ValueError:
-                print("Entrada de diámetro no válida.")
-        elif parametro == 'd':
-            try:
-                altura = float(input(f"Ingrese la altura del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
-                diametro = calcular_diametro_cilindro(altura, masa, densidad, unidad_longitud)
-                print(f"El diámetro del cilindro es: {diametro:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
-            except ValueError:
-                print("Entrada de altura no válida.")
-        else:
-            print("Parámetro no válido. Por favor ingrese 'h' para altura o 'd' para diámetro.")
+        calcular_cilindro(masa, densidad, unidad_longitud)
     elif figura == 'co':
-        parametro = input("¿Qué desea calcular, altura (h) o radio (r)? Ingrese 'h' o 'r': ").lower()
-        if parametro == 'h':
-            try:
-                radio = float(input(f"Ingrese el radio del cono ({UNIDADES_LONGITUD[unidad_longitud]}): "))
-                altura = calcular_altura_cono(radio, masa, densidad, unidad_longitud)
-                print(f"La altura del cono es: {altura:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
-            except ValueError:
-                print("Entrada de radio no válida.")
-        elif parametro == 'r':
-            try:
-                altura = float(input(f"Ingrese la altura del cono ({UNIDADES_LONGITUD[unidad_longitud]}): "))
-                radio = calcular_radio_cono(altura, masa, densidad, unidad_longitud)
-                print(f"El radio del cono es: {radio:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
-            except ValueError:
-                print("Entrada de altura no válida.")
-        else:
-            print("Parámetro no válido. Por favor ingrese 'h' para altura o 'r' para radio.")
+        calcular_cono(masa, densidad, unidad_longitud)
     else:
         print("Figura no válida. Por favor ingrese 'c' para cilindro o 'co' para cono.")
 
 
-# Ejecutar la función
+def calcular_cilindro(masa: float, densidad: float, unidad_longitud: int):
+    """
+    Calcula las dimensiones de un cilindro.
+
+    Args:
+        masa (float): La masa del cilindro en kg.
+        densidad (float): La densidad del cilindro en kg/m^3.
+        unidad_longitud (int): El código de la unidad de longitud.
+    """
+    parametro = input("¿Qué desea calcular, altura (h) o diámetro (d)? Ingrese 'h' o 'd': ").lower()
+    if parametro == 'h':
+        diametro = float(input(f"Ingrese el diámetro del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+        diametro_metros = convertir_a_metros(diametro, unidad_longitud)
+        altura_metros = calcular_dimension_cilindro(diametro_metros, masa, densidad, True)
+        altura = convertir_desde_metros(altura_metros, unidad_longitud)
+        print(f"La altura del cilindro es: {altura:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+    elif parametro == 'd':
+        altura = float(input(f"Ingrese la altura del cilindro ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+        altura_metros = convertir_a_metros(altura, unidad_longitud)
+        diametro_metros = calcular_dimension_cilindro(altura_metros, masa, densidad, False)
+        diametro = convertir_desde_metros(diametro_metros, unidad_longitud)
+        print(f"El diámetro del cilindro es: {diametro:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+    else:
+        print("Parámetro no válido. Por favor ingrese 'h' para altura o 'd' para diámetro.")
+
+
+def calcular_cono(masa: float, densidad: float, unidad_longitud: int):
+    """
+    Calcula las dimensiones de un cono.
+
+    Args:
+        masa (float): La masa del cono en kg.
+        densidad (float): La densidad del cono en kg/m^3.
+        unidad_longitud (int): El código de la unidad de longitud.
+    """
+    parametro = input("¿Qué desea calcular, altura (h) o radio (r)? Ingrese 'h' o 'r': ").lower()
+    if parametro == 'h':
+        radio = float(input(f"Ingrese el radio del cono ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+        radio_metros = convertir_a_metros(radio, unidad_longitud)
+        altura_metros = calcular_dimension_cono(radio_metros, masa, densidad, True)
+        altura = convertir_desde_metros(altura_metros, unidad_longitud)
+        print(f"La altura del cono es: {altura:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+    elif parametro == 'r':
+        altura = float(input(f"Ingrese la altura del cono ({UNIDADES_LONGITUD[unidad_longitud]}): "))
+        altura_metros = convertir_a_metros(altura, unidad_longitud)
+        radio_metros = calcular_dimension_cono(altura_metros, masa, densidad, False)
+        radio = convertir_desde_metros(radio_metros, unidad_longitud)
+        print(f"El radio del cono es: {radio:.2f} {UNIDADES_LONGITUD[unidad_longitud]}")
+    else:
+        print("Parámetro no válido. Por favor ingrese 'h' para altura o 'r' para radio.")
+
+
 if __name__ == "__main__":
     calcular_figura_geometrica()
