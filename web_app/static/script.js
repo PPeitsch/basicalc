@@ -1,4 +1,4 @@
-let currentShape = '';
+let currentShape = 'cylinder';
 
 document.getElementById('cylinderBtn').addEventListener('click', () => setShape('cylinder'));
 document.getElementById('coneBtn').addEventListener('click', () => setShape('cone'));
@@ -7,6 +7,15 @@ document.getElementById('calculateBtn').addEventListener('click', calculate);
 function setShape(shape) {
     currentShape = shape;
     updateDimensionInput();
+    // Update button styles
+    document.getElementById('cylinderBtn').classList.remove('active');
+    document.getElementById('coneBtn').classList.remove('active');
+    document.getElementById(`${shape}Btn`).classList.add('active');
+}
+
+function initializeUI() {
+    setShape('cylinder');
+    document.getElementById('cylinderBtn').classList.add('active');
 }
 
 function updateDimensionInput() {
@@ -116,3 +125,5 @@ function drawShape(value, dimension) {
     visualization.innerHTML = '';
     visualization.appendChild(canvas);
 }
+
+document.addEventListener('DOMContentLoaded', initializeUI);
