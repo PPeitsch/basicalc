@@ -34,7 +34,7 @@ function updateDimensionInput() {
             <label id="dimensionLabel" for="dimensionValue">
                 ${currentShape === 'cylinder' ? 'Diameter' : 'Radius'}:
             </label>
-            <input type="number" id="dimensionValue" step="0.01" required>
+            <input type="number" id="dimensionValue" step="0.01" min="0.01" required>
         </div>
     `;
     dimensionInput.innerHTML = html;
@@ -50,44 +50,62 @@ function updateDimensionLabel() {
     }
 }
 
-function calculate() {
-    const data = {
-        shape: currentShape,
-        mass: document.getElementById('mass').value,
-        density: document.getElementById('density').value,
-        massUnit: document.getElementById('massUnit').value,
-        densityUnit: document.getElementById('densityUnit').value,
-        lengthUnit: document.getElementById('lengthUnit').value,
-        calculationType: document.getElementById('calculationType').value,
-    };
-
-    if (data.calculationType === 'height') {
-        data.radiusOrDiameter = document.getElementById('dimensionValue').value;
-    } else {
-        data.height = document.getElementById('dimensionValue').value;
+function validateInput(value, fieldName) {
+    if (value === "" || isNaN(value)) {
+        throw new Error(`Please enter a valid number for ${fieldName}.`);
     }
+    if (value <= 0) {
+        throw new Error(`${fieldName} must be greater than zero.`);
+    }
+}
 
-    fetch('/calculate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('result').textContent =
-                `${data.dimension}: ${data.result} ${data.unit}`;
-            drawShape(data.result, data.dimension);
+function calculate() {
+    try {
+        const data = {
+            shape: currentShape,
+            mass: document.getElementById('mass').value,
+            density: document.getElementById('density').value,
+            massUnit: document.getElementById('massUnit').value,
+            densityUnit: document.getElementById('densityUnit').value,
+            lengthUnit: document.getElementById('lengthUnit').value,
+            calculationType: document.getElementById('calculationType').value,
+        };
+
+        validateInput(data.mass, "Mass");
+        validateInput(data.density, "Density");
+
+        if (data.calculationType === 'height') {
+            data.radiusOrDiameter = document.getElementById('dimensionValue').value;
+            validateInput(data.radiusOrDiameter, currentShape === 'cylinder' ? "Diameter" : "Radius");
         } else {
-            document.getElementById('result').textContent = `Error: ${data.error}`;
+            data.height = document.getElementById('dimensionValue').value;
+            validateInput(data.height, "Height");
         }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        document.getElementById('result').textContent = 'An error occurred.';
-    });
+
+        fetch('/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('result').textContent =
+                    `${data.dimension}: ${data.result} ${data.unit}`;
+                drawShape(data.result, data.dimension);
+            } else {
+                document.getElementById('result').textContent = `Error: ${data.error}`;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('result').textContent = 'An error occurred.';
+        });
+    } catch (error) {
+        document.getElementById('result').textContent = `Error: ${error.message}`;
+    }
 }
 
 function drawShape(value, dimension) {
