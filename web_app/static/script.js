@@ -110,38 +110,105 @@ function calculate() {
 
 function drawShape(value, dimension) {
     const canvas = document.createElement('canvas');
-    canvas.width = 300;
-    canvas.height = 300;
+    canvas.width = 400;
+    canvas.height = 400;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    const centerY = canvas.height / 2 - 20; // Move shape up slightly
+    const maxDimension = 180; // Reduced to leave more space for labels
 
-    ctx.beginPath();
+    let radius, height;
     if (currentShape === 'cylinder') {
-        const radius = dimension === 'Diameter' ? value / 2 : 50;
-        const height = dimension === 'Height' ? value : 100;
-        ctx.ellipse(centerX, centerY - height / 2, radius, radius / 4, 0, 0, 2 * Math.PI);
-        ctx.moveTo(centerX - radius, centerY - height / 2);
-        ctx.lineTo(centerX - radius, centerY + height / 2);
-        ctx.moveTo(centerX + radius, centerY - height / 2);
-        ctx.lineTo(centerX + radius, centerY + height / 2);
-        ctx.ellipse(centerX, centerY + height / 2, radius, radius / 4, 0, 0, 2 * Math.PI);
-    } else if (currentShape === 'cone') {
-        const radius = dimension === 'Radius' ? value : 50;
-        const height = dimension === 'Height' ? value : 100;
-        ctx.moveTo(centerX - radius, centerY + height / 2);
-        ctx.lineTo(centerX, centerY - height / 2);
-        ctx.lineTo(centerX + radius, centerY + height / 2);
-        ctx.closePath();
-        ctx.ellipse(centerX, centerY + height / 2, radius, radius / 4, 0, 0, 2 * Math.PI);
+        radius = dimension === 'Diameter' ? value / 2 : maxDimension / 4;
+        height = dimension === 'Height' ? value : maxDimension;
+    } else { // cone
+        radius = dimension === 'Radius' ? value : maxDimension / 4;
+        height = dimension === 'Height' ? value : maxDimension;
+    }
+
+    // Scale the shape to fit the canvas
+    const scale = Math.min(maxDimension / (2 * radius), maxDimension / height);
+    radius *= scale;
+    height *= scale;
+
+    // Draw the shape
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    if (currentShape === 'cylinder') {
+        drawCylinder(ctx, centerX, centerY, radius, height);
+    } else {
+        drawCone(ctx, centerX, centerY, radius, height);
     }
     ctx.stroke();
+
+    // Draw dimension lines and labels
+    const lengthUnit = document.getElementById('lengthUnit').options[document.getElementById('lengthUnit').selectedIndex].text;
+    drawDimensionLine(ctx, centerX - radius, centerY + height/2 + 40, centerX + radius, centerY + height/2 + 40,
+                      `${(currentShape === 'cylinder' ? radius * 2 : radius).toFixed(2)} ${lengthUnit}`, 'bottom');
+    drawDimensionLine(ctx, centerX + radius + 40, centerY - height/2, centerX + radius + 40, centerY + height/2,
+                      `${height.toFixed(2)} ${lengthUnit}`, 'right');
 
     const visualization = document.getElementById('shapeVisualization');
     visualization.innerHTML = '';
     visualization.appendChild(canvas);
+}
+
+function drawCylinder(ctx, centerX, centerY, radius, height) {
+    ctx.ellipse(centerX, centerY - height/2, radius, radius/4, 0, 0, 2 * Math.PI);
+    ctx.moveTo(centerX - radius, centerY - height/2);
+    ctx.lineTo(centerX - radius, centerY + height/2);
+    ctx.moveTo(centerX + radius, centerY - height/2);
+    ctx.lineTo(centerX + radius, centerY + height/2);
+    ctx.ellipse(centerX, centerY + height/2, radius, radius/4, 0, 0, 2 * Math.PI);
+}
+
+function drawCone(ctx, centerX, centerY, radius, height) {
+    ctx.moveTo(centerX - radius, centerY + height/2);
+    ctx.lineTo(centerX, centerY - height/2);
+    ctx.lineTo(centerX + radius, centerY + height/2);
+    ctx.closePath();
+    ctx.ellipse(centerX, centerY + height/2, radius, radius/4, 0, 0, 2 * Math.PI);
+}
+
+function drawDimensionLine(ctx, x1, y1, x2, y2, label, labelPosition = 'center') {
+    const arrowSize = 5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // Draw arrowheads
+    drawArrow(ctx, x1, y1, x2, y2, arrowSize);
+    drawArrow(ctx, x2, y2, x1, y1, arrowSize);
+
+    // Draw label
+    ctx.font = '12px Arial';
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    let textX = (x1 + x2) / 2;
+    let textY = (y1 + y2) / 2;
+
+    if (labelPosition === 'bottom') {
+        textY += 15; // Move text below the line
+    } else if (labelPosition === 'right') {
+        textX += 15; // Move text to the right of the line
+        ctx.textAlign = 'left';
+    }
+
+    ctx.fillText(label, textX, textY);
+}
+
+function drawArrow(ctx, fromX, fromY, toX, toY, size) {
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(fromX - size * Math.cos(angle - Math.PI / 6), fromY - size * Math.sin(angle - Math.PI / 6));
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(fromX - size * Math.cos(angle + Math.PI / 6), fromY - size * Math.sin(angle + Math.PI / 6));
+    ctx.stroke();
 }
 
 document.addEventListener('DOMContentLoaded', initializeUI);
