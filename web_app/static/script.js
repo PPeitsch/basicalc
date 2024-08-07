@@ -111,13 +111,13 @@ function calculate() {
 function drawShape(value, dimension) {
     const canvas = document.createElement('canvas');
     canvas.width = 400;
-    canvas.height = 400;
+    canvas.height = 420; // Increased height to add space at the bottom
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2 - 20; // Move shape up slightly
-    const maxDimension = 180; // Reduced to leave more space for labels
+    const centerY = canvas.height / 2 - 80; // Move shape up more
+    const maxDimension = 200;
 
     let radius, height;
     if (currentShape === 'cylinder') {
