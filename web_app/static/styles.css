@@ -32,11 +32,21 @@ input, select {
 button {
     padding: 5px 10px;
     margin-right: 5px;
+    border-radius: 4px;  /* Add this line to ensure rounded corners */
+    border: 1px solid #007bff;  /* Add a border */
+    background-color: white;  /* Set initial background color */
+    color: #007bff;  /* Set initial text color */
+    transition: all 0.3s ease;  /* Add smooth transition for color changes */
+}
+
+button:hover {
+    background-color: #e6f2ff;  /* Light blue background on hover */
 }
 
 button.active {
     background-color: #007bff;
     color: white;
+    border-radius: 4px;  /* Maintain rounded corners when active */
 }
 
 #result {
