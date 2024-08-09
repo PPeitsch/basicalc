@@ -109,29 +109,50 @@ function calculate() {
 }
 
 function drawShape(value, dimension) {
+    const visualizationFrame = document.getElementById('visualizationFrame');
+    const shapeVisualization = document.getElementById('shapeVisualization');
+    
+    // Clear previous content
+    shapeVisualization.innerHTML = '';
+
     const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 420; // Increased height to add space at the bottom
+    shapeVisualization.appendChild(canvas);
+    
+    // Set canvas size based on the visualization frame size
+    const resizeCanvas = () => {
+        canvas.width = shapeVisualization.clientWidth;
+        canvas.height = shapeVisualization.clientHeight;
+        drawOnCanvas(canvas, value, dimension);
+    };
+
+    // Initial resize and draw
+    resizeCanvas();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', resizeCanvas);
+}
+
+function drawOnCanvas(canvas, value, dimension) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2 - 80; // Move shape up more
-    const maxDimension = 200;
+    const centerY = canvas.height / 2;
+    const maxDimension = Math.min(canvas.width, canvas.height) * 0.8;  // 80% of the smaller dimension
 
     let radius, height;
     if (currentShape === 'cylinder') {
         radius = dimension === 'Diameter' ? value / 2 : maxDimension / 4;
-        height = dimension === 'Height' ? value : maxDimension;
+        height = dimension === 'Height' ? value : maxDimension / 2;
     } else { // cone
         radius = dimension === 'Radius' ? value : maxDimension / 4;
-        height = dimension === 'Height' ? value : maxDimension;
+        height = dimension === 'Height' ? value : maxDimension / 2;
     }
 
     // Scale the shape to fit the canvas
     const scale = Math.min(maxDimension / (2 * radius), maxDimension / height);
-    radius *= scale;
-    height *= scale;
+    radius *= scale / 2;
+    height *= scale / 2;
 
     // Draw the shape
     ctx.beginPath();
@@ -145,14 +166,10 @@ function drawShape(value, dimension) {
 
     // Draw dimension lines and labels
     const lengthUnit = document.getElementById('lengthUnit').options[document.getElementById('lengthUnit').selectedIndex].text;
-    drawDimensionLine(ctx, centerX - radius, centerY + height/2 + 40, centerX + radius, centerY + height/2 + 40,
+    drawDimensionLine(ctx, centerX - radius, centerY + height/2 + 20, centerX + radius, centerY + height/2 + 20,
                       `${(currentShape === 'cylinder' ? radius * 2 : radius).toFixed(2)} ${lengthUnit}`, 'bottom');
-    drawDimensionLine(ctx, centerX + radius + 40, centerY - height/2, centerX + radius + 40, centerY + height/2,
+    drawDimensionLine(ctx, centerX + radius + 20, centerY - height/2, centerX + radius + 20, centerY + height/2,
                       `${height.toFixed(2)} ${lengthUnit}`, 'right');
-
-    const visualization = document.getElementById('shapeVisualization');
-    visualization.innerHTML = '';
-    visualization.appendChild(canvas);
 }
 
 function drawCylinder(ctx, centerX, centerY, radius, height) {
