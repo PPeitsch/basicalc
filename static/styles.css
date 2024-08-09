@@ -1,27 +1,44 @@
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 20px;
     background-color: #f0f0f0;
 }
 
-#calculator {
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#calculator, #visualizationFrame {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 div {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 label {
     display: inline-block;
     width: 100px;
+    margin-right: 10px;
 }
 
 input, select {
@@ -37,6 +54,7 @@ button {
     background-color: white;
     color: #007bff;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 button:hover {
@@ -46,16 +64,51 @@ button:hover {
 button.active {
     background-color: #007bff;
     color: white;
-    border-radius: 4px;
+}
+
+#calculateBtn {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-size: 16px;
+}
+
+#calculateBtn:hover {
+    background-color: #0056b3;
 }
 
 #result {
     margin-top: 20px;
     font-weight: bold;
+    text-align: center;
 }
 
 #shapeVisualization {
-    margin-top: 20px;
-    width: 300px;
-    height: 300px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#shapeVisualization canvas {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto !important;
+    height: auto !important;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #calculator, #visualizationFrame {
+        max-width: 100%;
+        width: 100%;
+    }
 }

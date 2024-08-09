@@ -7,45 +7,48 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div id="calculator">
-        <h1>Geometric Calculator</h1>
-        <div>
-            <label>Shape:</label>
-            <button id="cylinderBtn">Cylinder</button>
-            <button id="coneBtn">Cone</button>
+    <div class="container">
+        <div id="calculator">
+            <h1>Geometric Calculator</h1>
+            <div>
+                <label for="shape">Shape:</label>
+                <button id="cylinderBtn">Cylinder</button>
+                <button id="coneBtn">Cone</button>
+            </div>
+            <div>
+                <label for="mass">Mass:</label>
+                <input type="number" id="mass" step="0.01" min="0.01" required>
+                <select id="massUnit">
+                    {% for key, value in mass_units.items() %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="density">Density:</label>
+                <input type="number" id="density" step="0.01" min="0.01" required>
+                <select id="densityUnit">
+                    {% for key, value in density_units.items() %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="lengthUnit">Length Unit:</label>
+                <select id="lengthUnit">
+                    {% for key, value in length_units.items() %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="dimensionInput"></div>
+            <button id="calculateBtn">Calculate</button>
         </div>
-        <div>
-            <label for="mass">Mass:</label>
-            <input type="number" id="mass" step="0.01" required>
-            <select id="massUnit">
-                {% for key, value in mass_units.items() %}
-                    <option value="{{ key }}">{{ value }}</option>
-                {% endfor %}
-            </select>
+        <div id="visualizationFrame">
+            <h2>Shape Visualization</h2>
+            <div id="shapeVisualization"></div>
+            <div id="result"></div>
         </div>
-        <div>
-            <label for="density">Density:</label>
-            <input type="number" id="density" step="0.01" required>
-            <select id="densityUnit">
-                {% for key, value in density_units.items() %}
-                    <option value="{{ key }}">{{ value }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <label for="lengthUnit">Length Unit:</label>
-            <select id="lengthUnit">
-                {% for key, value in length_units.items() %}
-                    <option value="{{ key }}">{{ value }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div id="dimensionInput">
-            <!-- This will be populated by JavaScript -->
-        </div>
-        <button id="calculateBtn">Calculate</button>
-        <div id="result"></div>
-        <div id="shapeVisualization"></div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
