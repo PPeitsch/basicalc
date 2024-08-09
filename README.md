@@ -1,93 +1,89 @@
-# Geometric Shape Calculator
+# Geometric Calculator App
 
-This Python program calculates dimensions for geometric shapes based on their density, mass, and one of the shape parameters (height, diameter, or radius). It currently supports calculations for cylinders and cones.
+## Overview
+
+The Geometric Calculator App is a Flask-based web application that allows users to perform calculations related to cylindrical and conical shapes. Users can calculate the height or radius/diameter of these shapes based on their mass, density, and other dimensions.
 
 ## Features
 
-- Convert units of length (mm, cm, m) to meters and vice versa.
-- Convert units of mass (mg, g, kg) to kilograms.
-- Convert density units (g/cm³, kg/m³) to SI units.
-- Calculate height or diameter of a cylinder given its density, mass, and one of the parameters.
-- Calculate height or radius of a cone given its density, mass, and one of the parameters.
+- Calculate height or radius/diameter for cylinders and cones
+- Support for multiple units of measurement
+- Interactive shape visualization
+- Responsive web interface
 
-## Requirements
+## Technologies Used
 
-- Python 3.x
+- Backend: Python, Flask
+- Frontend: HTML, CSS, JavaScript
+- Visualization: HTML5 Canvas
+
+## Project Structure
+
+```
+geometric-calculator/
+├── app/
+│   ├── __init__.py
+│   ├── calculator.py
+│   ├── conversions.py
+│   ├── shapes.py
+│   └── units.py
+├── static/
+│   ├── script.js
+│   └── styles.css
+├── templates/
+│   └── index.html
+├── app.py
+├── requirements.txt
+├── LICENSE
+└── README.md
+```
+
+## Setup and Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/geometric-calculator.git
+   cd geometric-calculator
+   ```
+
+2. Create a virtual environment and activate it:
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   ```
+
+3. Install the required packages:
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Run the application:
+   ```
+   python app.py
+   ```
+
+5. Open a web browser and navigate to `http://localhost:5000` to use the application.
 
 ## Usage
 
-1. Clone the repository or download the script.
-2. Run the script using Python:
-
-    ```sh
-    python geometric_calculator.py
-    ```
-
-3. Follow the on-screen instructions to input the required data for calculations.
-
-## Example
-
-### Calculate Cylinder Dimensions
-
-1. Select the density unit:
-    - 1: g/cm³
-    - 2: kg/m³
-
-2. Select the mass unit:
-    - 1: mg
-    - 2: g
-    - 3: kg
-
-3. Select the length unit (for diameter and height):
-    - 1: mm
-    - 2: cm
-    - 3: m
-
-4. Enter the density value.
-5. Enter the mass value.
-6. Choose to calculate either height (h) or diameter (d).
-7. Enter the known parameter (diameter or height).
-
-### Calculate Cone Dimensions
-
-1. Select the density unit:
-    - 1: g/cm³
-    - 2: kg/m³
-
-2. Select the mass unit:
-    - 1: mg
-    - 2: g
-    - 3: kg
-
-3. Select the length unit (for radius and height):
-    - 1: mm
-    - 2: cm
-    - 3: m
-
-4. Enter the density value.
-5. Enter the mass value.
-6. Choose to calculate either height (h) or radius (r).
-7. Enter the known parameter (radius or height).
-
-## Code Overview
-
-### Functions
-
-- `convertir_a_metros(valor, unidad)`: Converts a value to meters based on the given unit.
-- `convertir_a_kilogramos(valor, unidad)`: Converts a value to kilograms based on the given unit.
-- `convertir_densidad(densidad, unidad)`: Converts density to kg/m³ based on the given unit.
-- `convertir_desde_metros(valor, unidad)`: Converts a value from meters to the specified unit.
-- `calcular_altura_cilindro(diametro, masa, densidad, unidad_longitud)`: Calculates the height of a cylinder.
-- `calcular_diametro_cilindro(altura, masa, densidad, unidad_longitud)`: Calculates the diameter of a cylinder.
-- `calcular_altura_cono(radio, masa, densidad, unidad_longitud)`: Calculates the height of a cone.
-- `calcular_radio_cono(altura, masa, densidad, unidad_longitud)`: Calculates the radius of a cone.
-- `solicitar_datos()`: Prompts the user for input data.
-- `calcular_figura_geometrica()`: Main function to perform geometric calculations based on user input.
+1. Select the shape (cylinder or cone) you want to calculate.
+2. Enter the mass and density of the object.
+3. Choose the appropriate units for mass, density, and length.
+4. Select whether you want to calculate the height or the radius/diameter.
+5. Enter the known dimension (height or radius/diameter).
+6. Click the "Calculate" button to see the result.
+7. The calculated dimension will be displayed along with a visualization of the shape.
 
 ## Contributing
 
-Contributions are welcome! Please submit a pull request or open an issue to discuss your changes.
+Contributions to improve the Geometric Calculator App are welcome. Please follow these steps to contribute:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with descriptive commit messages.
+4. Push your changes to your fork.
+5. Submit a pull request to the main repository.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). For the full license text, see the [LICENSE](LICENSE) file in the project root.
