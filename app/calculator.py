@@ -1,4 +1,4 @@
-from .shapes import GeometricShape, Cylinder, Cone
+from .shapes import Cylinder, Cone
 from .conversions import Converter
 from .units import Units
 
