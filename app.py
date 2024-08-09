@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify
-from geometric_calculator import GeometricCalculator, Units
+from app.calculator import GeometricCalculator
+from app.units import Units
+
 
 app = Flask(__name__)
 
@@ -34,12 +36,15 @@ def calculate():
 
         return jsonify({
             'success': True,
-            'result': round(result, 2),
+            'result': round(result, 4),  # Increased precision
             'dimension': dimension,
             'unit': Units.LENGTH[int(data['lengthUnit'])]
         })
+    except ValueError as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({'success': False, 'error': 'An unexpected error occurred'}), 500
 
 
 if __name__ == '__main__':
