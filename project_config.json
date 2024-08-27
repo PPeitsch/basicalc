@@ -1,0 +1,6 @@
+{
+  "title": "Basic Calculator App",
+  "description": "This is a  project to demonstrate the structure of project_config.json",
+  "technologies": ["Python", "Flask", "JavaScript", "HTML", "CSS"],
+  "icon": "config"
+}
