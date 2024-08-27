@@ -1,6 +1,6 @@
 {
   "title": "Basic Calculator App",
-  "description": "This is a  project to demonstrate the structure of project_config.json",
+  "description": "The Geometric Calculator App is a Flask-based web application that allows users to perform calculations related to cylindrical and conical shapes. Users can calculate the height or radius/diameter of these shapes based on their mass, density, and other dimensions.\n",
   "technologies": ["Python", "Flask", "JavaScript", "HTML", "CSS"],
   "icon": "config"
 }
