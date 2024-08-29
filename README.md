@@ -7,7 +7,7 @@ This Flask-based web application enables users to perform calculations related t
 ## Features
 
 - **Versatile Calculations:** Determine dimensions or properties for cylinders and cones.
-- **Multi-Unit Support:** Handle calculations in a variety of units for greater flexibility.
+- **Multi-Unit Support:** Handle calculations in various units for greater flexibility.
 - **Interactive Visualization:** View dynamic representations of shapes based on user inputs.
 - **Responsive Design:** Experience a seamless interface across all devices, ensuring usability on any platform.
 
