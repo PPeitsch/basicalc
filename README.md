@@ -1,21 +1,21 @@
-# Geometric Calculator App
+# Shape Dimensions Tool
 
 ## Overview
 
-The Geometric Calculator App is a Flask-based web application that allows users to perform calculations related to cylindrical and conical shapes. Users can calculate the height or radius/diameter of these shapes based on their mass, density, and other dimensions.
+This Flask-based web application enables users to perform calculations related to cylindrical and conical shapes. It allows users to determine dimensions such as height or radius/diameter, using inputs like mass, density, and other relevant properties. Future improvements may extend functionality to support additional geometric shapes.
 
 ## Features
 
-- Calculate height or radius/diameter for cylinders and cones
-- Support for multiple units of measurement
-- Interactive shape visualization
-- Responsive web interface
+- **Versatile Calculations:** Determine dimensions or properties for cylinders and cones.
+- **Multi-Unit Support:** Handle calculations in a variety of units for greater flexibility.
+- **Interactive Visualization:** View dynamic representations of shapes based on user inputs.
+- **Responsive Design:** Experience a seamless interface across all devices, ensuring usability on any platform.
 
 ## Technologies Used
 
-- Backend: Python, Flask
-- Frontend: HTML, CSS, JavaScript
-- Visualization: HTML5 Canvas
+- **Backend:** Python, Flask
+- **Frontend:** HTML, CSS, JavaScript
+- **Visualization:** HTML5 Canvas
 
 ## Project Structure
 
